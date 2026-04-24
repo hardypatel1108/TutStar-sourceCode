@@ -1,0 +1,976 @@
+-- Baseline schema generated from current database
+
+SET FOREIGN_KEY_CHECKS=0;
+
+DROP TABLE IF EXISTS `admins`;
+
+CREATE TABLE `admins` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `audit_logs`;
+
+CREATE TABLE `audit_logs` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) unsigned DEFAULT NULL,
+  `action` varchar(100) DEFAULT NULL,
+  `model_type` varchar(100) DEFAULT NULL,
+  `model_id` bigint(20) unsigned DEFAULT NULL,
+  `changes` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`changes`)),
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `deleted_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_user_id` (`user_id`),
+  KEY `idx_model` (`model_type`,`model_id`),
+  KEY `idx_deleted_at` (`deleted_at`),
+  CONSTRAINT `fk_audit_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB AUTO_INCREMENT=70 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+DROP TABLE IF EXISTS `batch_event`;
+
+CREATE TABLE `batch_event` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `event_id` bigint(20) unsigned NOT NULL,
+  `batch_id` bigint(20) unsigned NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_batch_event_event_batch` (`event_id`,`batch_id`),
+  KEY `batch_event_batch_id_index` (`batch_id`),
+  CONSTRAINT `batch_event_batch_id_foreign` FOREIGN KEY (`batch_id`) REFERENCES `batches` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `batch_event_event_id_foreign` FOREIGN KEY (`event_id`) REFERENCES `events` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `batch_schedules`;
+
+CREATE TABLE `batch_schedules` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `batch_id` bigint(20) unsigned NOT NULL,
+  `start_datetime` datetime NOT NULL,
+  `end_datetime` datetime DEFAULT NULL,
+  `timezone` varchar(50) DEFAULT 'Asia/Kolkata',
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `deleted_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_schedule_batch` (`batch_id`),
+  KEY `idx_start_datetime` (`start_datetime`),
+  KEY `idx_deleted_at` (`deleted_at`),
+  CONSTRAINT `batch_schedules_ibfk_1` FOREIGN KEY (`batch_id`) REFERENCES `batches` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+DROP TABLE IF EXISTS `batch_students`;
+
+CREATE TABLE `batch_students` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `batch_id` bigint(20) unsigned NOT NULL,
+  `student_id` bigint(20) unsigned NOT NULL,
+  `joined_at` datetime DEFAULT current_timestamp(),
+  `ended_at` datetime DEFAULT NULL,
+  `status` enum('active','left','expired') DEFAULT 'active',
+  `allocated_by` bigint(20) unsigned DEFAULT NULL,
+  `allocated_at` datetime DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `deleted_at` datetime DEFAULT NULL,
+  `expiry_notified` tinyint(1) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_batch_student` (`batch_id`,`student_id`),
+  KEY `idx_status` (`status`),
+  KEY `idx_deleted_at` (`deleted_at`),
+  KEY `student_id` (`student_id`),
+  KEY `allocated_by` (`allocated_by`),
+  CONSTRAINT `batch_students_ibfk_1` FOREIGN KEY (`batch_id`) REFERENCES `batches` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `batch_students_ibfk_2` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `batch_students_ibfk_3` FOREIGN KEY (`allocated_by`) REFERENCES `users` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB AUTO_INCREMENT=106 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+DROP TABLE IF EXISTS `batches`;
+
+CREATE TABLE `batches` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `batch_code` varchar(150) NOT NULL,
+  `plan_id` bigint(20) unsigned DEFAULT NULL,
+  `class_id` bigint(20) unsigned DEFAULT NULL,
+  `subject_id` bigint(20) unsigned DEFAULT NULL,
+  `teacher_id` bigint(20) unsigned DEFAULT NULL,
+  `time_slot` varchar(30) DEFAULT NULL,
+  `students_limit` int(11) DEFAULT 100,
+  `status` enum('upcoming','active','inactive','completed') DEFAULT 'upcoming',
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `deleted_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `plan_id` (`plan_id`),
+  KEY `subject_id` (`subject_id`),
+  KEY `idx_batch_teacher` (`teacher_id`),
+  KEY `idx_batch_class` (`class_id`),
+  KEY `idx_deleted_at` (`deleted_at`),
+  KEY `batches_time_slot_index` (`time_slot`),
+  CONSTRAINT `batches_ibfk_1` FOREIGN KEY (`plan_id`) REFERENCES `plans` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `batches_ibfk_2` FOREIGN KEY (`class_id`) REFERENCES `classes` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `batches_ibfk_3` FOREIGN KEY (`subject_id`) REFERENCES `subjects` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `batches_ibfk_4` FOREIGN KEY (`teacher_id`) REFERENCES `teachers` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB AUTO_INCREMENT=97 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+DROP TABLE IF EXISTS `boards`;
+
+CREATE TABLE `boards` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL,
+  `slug` varchar(255) NOT NULL,
+  `description` text DEFAULT NULL,
+  `logo` varchar(255) DEFAULT NULL,
+  `status` enum('active','inactive') DEFAULT 'active',
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `deleted_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `boards_slug_unique` (`slug`),
+  KEY `idx_deleted_at` (`deleted_at`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+DROP TABLE IF EXISTS `cache`;
+
+CREATE TABLE `cache` (
+  `key` varchar(255) NOT NULL,
+  `value` mediumtext NOT NULL,
+  `expiration` int(11) NOT NULL,
+  PRIMARY KEY (`key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `cache_locks`;
+
+CREATE TABLE `cache_locks` (
+  `key` varchar(255) NOT NULL,
+  `owner` varchar(255) NOT NULL,
+  `expiration` int(11) NOT NULL,
+  PRIMARY KEY (`key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `checkout_offers`;
+
+CREATE TABLE `checkout_offers` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `checkout_plan_id` bigint(20) unsigned NOT NULL,
+  `title` varchar(191) DEFAULT NULL,
+  `type` enum('percentage','flat') NOT NULL,
+  `value` decimal(10,2) NOT NULL,
+  `starts_at` datetime DEFAULT NULL,
+  `ends_at` datetime DEFAULT NULL,
+  `active` tinyint(1) DEFAULT 1,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `deleted_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_type` (`type`),
+  KEY `idx_active` (`active`),
+  KEY `idx_deleted_at` (`deleted_at`),
+  KEY `checkout_offers_checkout_plan_id_foreign` (`checkout_plan_id`),
+  CONSTRAINT `checkout_offers_checkout_plan_id_foreign` FOREIGN KEY (`checkout_plan_id`) REFERENCES `checkout_plans` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=146 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+DROP TABLE IF EXISTS `checkout_plans`;
+
+CREATE TABLE `checkout_plans` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `plan_id` bigint(20) unsigned NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `months` int(10) unsigned NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `checkout_plans_plan_id_foreign` (`plan_id`),
+  CONSTRAINT `checkout_plans_plan_id_foreign` FOREIGN KEY (`plan_id`) REFERENCES `plans` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=142 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `classes`;
+
+CREATE TABLE `classes` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `board_id` bigint(20) unsigned DEFAULT NULL,
+  `name` varchar(100) NOT NULL,
+  `slug` varchar(255) NOT NULL,
+  `description` text DEFAULT NULL,
+  `ordinal` int(11) DEFAULT 0,
+  `status` enum('active','inactive','blocked') DEFAULT 'active',
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `deleted_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `classes_slug_unique` (`slug`),
+  KEY `idx_board` (`board_id`),
+  KEY `idx_deleted_at` (`deleted_at`),
+  CONSTRAINT `classes_ibfk_1` FOREIGN KEY (`board_id`) REFERENCES `boards` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+DROP TABLE IF EXISTS `classes_sessions`;
+
+CREATE TABLE `classes_sessions` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `batch_id` bigint(20) unsigned DEFAULT NULL,
+  `class_date` datetime NOT NULL,
+  `subject_id` bigint(20) unsigned DEFAULT NULL,
+  `teacher_id` bigint(20) unsigned DEFAULT NULL,
+  `meeting_id` bigint(20) unsigned DEFAULT NULL,
+  `occurrence_id` varchar(255) DEFAULT NULL,
+  `topic` varchar(255) DEFAULT NULL,
+  `status` enum('scheduled','completed','cancelled','rescheduled') DEFAULT 'scheduled',
+  `zoom_meeting_id` varchar(255) DEFAULT NULL,
+  `zoom_join_url` text DEFAULT NULL,
+  `zoom_start_url` text DEFAULT NULL,
+  `recording_link` text DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `deleted_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `batch_id` (`batch_id`),
+  KEY `subject_id` (`subject_id`),
+  KEY `teacher_id` (`teacher_id`),
+  KEY `idx_session_date` (`class_date`),
+  KEY `idx_session_status` (`status`),
+  KEY `idx_deleted_at` (`deleted_at`),
+  KEY `classes_sessions_meeting_id_foreign` (`meeting_id`),
+  KEY `idx_classes_sessions_occurrence_id` (`occurrence_id`),
+  CONSTRAINT `classes_sessions_ibfk_1` FOREIGN KEY (`batch_id`) REFERENCES `batches` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `classes_sessions_ibfk_2` FOREIGN KEY (`subject_id`) REFERENCES `subjects` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `classes_sessions_ibfk_3` FOREIGN KEY (`teacher_id`) REFERENCES `teachers` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `classes_sessions_meeting_id_foreign` FOREIGN KEY (`meeting_id`) REFERENCES `meetings` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=868 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+DROP TABLE IF EXISTS `clazzs`;
+
+CREATE TABLE `clazzs` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `doubts`;
+
+CREATE TABLE `doubts` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `classes_session_id` bigint(20) unsigned DEFAULT NULL,
+  `student_id` bigint(20) unsigned NOT NULL,
+  `teacher_id` bigint(20) unsigned DEFAULT NULL,
+  `question` text NOT NULL,
+  `attachment` varchar(255) DEFAULT NULL,
+  `status` enum('open','answered','closed') DEFAULT 'open',
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `deleted_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `classes_session_id` (`classes_session_id`),
+  KEY `student_id` (`student_id`),
+  KEY `teacher_id` (`teacher_id`),
+  KEY `idx_status` (`status`),
+  KEY `idx_deleted_at` (`deleted_at`),
+  CONSTRAINT `doubts_ibfk_1` FOREIGN KEY (`classes_session_id`) REFERENCES `classes_sessions` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `doubts_ibfk_2` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `doubts_ibfk_3` FOREIGN KEY (`teacher_id`) REFERENCES `teachers` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB AUTO_INCREMENT=136 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+DROP TABLE IF EXISTS `events`;
+
+CREATE TABLE `events` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `title` varchar(255) NOT NULL,
+  `description` text DEFAULT NULL,
+  `event_image` varchar(255) DEFAULT NULL,
+  `meeting_id` bigint(20) unsigned DEFAULT NULL,
+  `meeting_type` enum('single','recurring') NOT NULL DEFAULT 'single',
+  `recurrence` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`recurrence`)),
+  `zoom_meeting_id` varchar(255) DEFAULT NULL,
+  `zoom_join_url` text DEFAULT NULL,
+  `zoom_start_url` text DEFAULT NULL,
+  `zoom_recording_link` text DEFAULT NULL,
+  `zoom_status` enum('scheduled','started','ended','cancelled') DEFAULT 'scheduled',
+  `starts_at` datetime NOT NULL,
+  `ends_at` datetime DEFAULT NULL,
+  `active` tinyint(1) DEFAULT 1,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `deleted_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_event_time` (`starts_at`),
+  KEY `idx_zoom_status` (`zoom_status`),
+  KEY `idx_deleted_at` (`deleted_at`),
+  KEY `events_meeting_id_index` (`meeting_id`),
+  KEY `events_meeting_type_index` (`meeting_type`)
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+DROP TABLE IF EXISTS `failed_jobs`;
+
+CREATE TABLE `failed_jobs` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `uuid` varchar(255) NOT NULL,
+  `connection` text NOT NULL,
+  `queue` text NOT NULL,
+  `payload` longtext NOT NULL,
+  `exception` longtext NOT NULL,
+  `failed_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `failed_jobs_uuid_unique` (`uuid`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `feedback`;
+
+CREATE TABLE `feedback` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `student_id` bigint(20) unsigned NOT NULL,
+  `rating` tinyint(3) unsigned NOT NULL,
+  `comment` text DEFAULT NULL,
+  `forced_by_admin` tinyint(1) NOT NULL DEFAULT 0,
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `feedback_student_id_foreign` (`student_id`),
+  CONSTRAINT `feedback_student_id_foreign` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `file_entries`;
+
+CREATE TABLE `file_entries` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `files`;
+
+CREATE TABLE `files` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) unsigned DEFAULT NULL,
+  `model_type` varchar(100) DEFAULT NULL,
+  `model_id` bigint(20) unsigned DEFAULT NULL,
+  `original_name` varchar(255) NOT NULL,
+  `file_path` varchar(255) NOT NULL,
+  `mime_type` varchar(100) DEFAULT NULL,
+  `size` bigint(20) DEFAULT NULL,
+  `visibility` enum('public','private') DEFAULT 'private',
+  `used_for` enum('profile','homework','doubt','recording','attachment') DEFAULT 'attachment',
+  `created_at` datetime DEFAULT current_timestamp(),
+  `updated_at` datetime DEFAULT NULL,
+  `deleted_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  KEY `idx_model` (`model_type`,`model_id`),
+  KEY `idx_used_for` (`used_for`),
+  KEY `idx_deleted_at` (`deleted_at`),
+  CONSTRAINT `files_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+DROP TABLE IF EXISTS `homeworks`;
+
+CREATE TABLE `homeworks` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `classes_session_id` bigint(20) unsigned DEFAULT NULL,
+  `teacher_id` bigint(20) unsigned DEFAULT NULL,
+  `title` varchar(255) DEFAULT NULL,
+  `description` text DEFAULT NULL,
+  `attachment` varchar(255) DEFAULT NULL,
+  `due_date` datetime DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `deleted_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_homework_per_session` (`classes_session_id`),
+  KEY `idx_classes_session_id` (`classes_session_id`),
+  KEY `idx_teacher_id` (`teacher_id`),
+  KEY `idx_deleted_at` (`deleted_at`),
+  CONSTRAINT `homeworks_ibfk_1` FOREIGN KEY (`classes_session_id`) REFERENCES `classes_sessions` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `homeworks_ibfk_2` FOREIGN KEY (`teacher_id`) REFERENCES `teachers` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB AUTO_INCREMENT=85 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+DROP TABLE IF EXISTS `job_batches`;
+
+CREATE TABLE `job_batches` (
+  `id` varchar(255) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `total_jobs` int(11) NOT NULL,
+  `pending_jobs` int(11) NOT NULL,
+  `failed_jobs` int(11) NOT NULL,
+  `failed_job_ids` longtext NOT NULL,
+  `options` mediumtext DEFAULT NULL,
+  `cancelled_at` int(11) DEFAULT NULL,
+  `created_at` int(11) NOT NULL,
+  `finished_at` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `jobs`;
+
+CREATE TABLE `jobs` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `queue` varchar(255) NOT NULL,
+  `payload` longtext NOT NULL,
+  `attempts` tinyint(3) unsigned NOT NULL,
+  `reserved_at` int(10) unsigned DEFAULT NULL,
+  `available_at` int(10) unsigned NOT NULL,
+  `created_at` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `jobs_queue_index` (`queue`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `meeting_occurrences`;
+
+CREATE TABLE `meeting_occurrences` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `meeting_id` bigint(20) unsigned NOT NULL,
+  `occurrence_id` varchar(100) NOT NULL,
+  `start_time` datetime NOT NULL,
+  `duration` int(11) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_meeting_occurrence_meeting_occurrence` (`meeting_id`,`occurrence_id`),
+  KEY `idx_meeting_occurrences_occurrence_id` (`occurrence_id`),
+  CONSTRAINT `fk_occurrence_meeting` FOREIGN KEY (`meeting_id`) REFERENCES `meetings` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=81 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+DROP TABLE IF EXISTS `meeting_user`;
+
+CREATE TABLE `meeting_user` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `meeting_id` bigint(20) unsigned NOT NULL,
+  `user_id` bigint(20) unsigned NOT NULL,
+  `role` enum('host','teacher','student','admin','guest') NOT NULL DEFAULT 'student',
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `meeting_user_unique` (`meeting_id`,`user_id`),
+  KEY `meeting_user_user_foreign` (`user_id`),
+  CONSTRAINT `meeting_user_meeting_foreign` FOREIGN KEY (`meeting_id`) REFERENCES `meetings` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `meeting_user_user_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=122 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `meetings`;
+
+CREATE TABLE `meetings` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `created_by` bigint(20) unsigned NOT NULL,
+  `topic` varchar(255) NOT NULL,
+  `description` text DEFAULT NULL,
+  `zoom_meeting_id` text DEFAULT NULL,
+  `zoom_uuid` varchar(255) DEFAULT NULL,
+  `zoom_host_email` varchar(255) DEFAULT NULL,
+  `start_time` datetime NOT NULL,
+  `duration` int(11) NOT NULL DEFAULT 60,
+  `status` enum('scheduled','started','ended','cancelled') NOT NULL DEFAULT 'scheduled',
+  `start_url` text DEFAULT NULL,
+  `join_url` text DEFAULT NULL,
+  `recording_status` enum('none','processing','available','failed') NOT NULL DEFAULT 'none',
+  `recording_url` text DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  `meeting_type` enum('single','recurring') NOT NULL DEFAULT 'single',
+  `recurrence` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`recurrence`)),
+  `timezone` varchar(50) DEFAULT 'Asia/Kolkata',
+  PRIMARY KEY (`id`),
+  KEY `meetings_created_by_foreign` (`created_by`),
+  KEY `zoom_meeting_id` (`zoom_meeting_id`(768)),
+  KEY `zoom_uuid` (`zoom_uuid`),
+  KEY `status` (`status`),
+  CONSTRAINT `meetings_created_by_foreign` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=63 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `model_has_permissions`;
+
+CREATE TABLE `model_has_permissions` (
+  `permission_id` bigint(20) unsigned NOT NULL,
+  `model_type` varchar(255) NOT NULL,
+  `model_id` bigint(20) unsigned NOT NULL,
+  PRIMARY KEY (`permission_id`,`model_id`,`model_type`),
+  KEY `model_has_permissions_model_id_model_type_index` (`model_id`,`model_type`),
+  CONSTRAINT `model_has_permissions_permission_id_foreign` FOREIGN KEY (`permission_id`) REFERENCES `permissions` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `model_has_roles`;
+
+CREATE TABLE `model_has_roles` (
+  `role_id` bigint(20) unsigned NOT NULL,
+  `model_type` varchar(255) NOT NULL,
+  `model_id` bigint(20) unsigned NOT NULL,
+  PRIMARY KEY (`role_id`,`model_id`,`model_type`),
+  KEY `model_has_roles_model_id_model_type_index` (`model_id`,`model_type`),
+  CONSTRAINT `model_has_roles_role_id_foreign` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `notifications`;
+
+CREATE TABLE `notifications` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) unsigned NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `message` text NOT NULL,
+  `type` enum('system','class','homework','payment','event','custom',' newuser','cron') DEFAULT 'system',
+  `model_type` varchar(100) DEFAULT NULL,
+  `model_id` bigint(20) unsigned DEFAULT NULL,
+  `payload` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`payload`)),
+  `is_read` tinyint(1) DEFAULT 0,
+  `read_at` datetime DEFAULT NULL,
+  `created_at` datetime DEFAULT current_timestamp(),
+  `updated_at` datetime DEFAULT NULL,
+  `deleted_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_user` (`user_id`),
+  KEY `idx_is_read` (`is_read`),
+  KEY `idx_type` (`type`),
+  KEY `idx_deleted_at` (`deleted_at`),
+  CONSTRAINT `notifications_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=84 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+DROP TABLE IF EXISTS `password_reset_tokens`;
+
+CREATE TABLE `password_reset_tokens` (
+  `email` varchar(255) NOT NULL,
+  `token` varchar(255) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `payments`;
+
+CREATE TABLE `payments` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `student_id` bigint(20) unsigned DEFAULT NULL,
+  `subscription_id` bigint(20) unsigned DEFAULT NULL,
+  `checkout_plan_id` bigint(20) unsigned DEFAULT NULL,
+  `amount` decimal(10,2) NOT NULL,
+  `gateway` enum('phonepe','manual') DEFAULT 'manual',
+  `gateway_txn_id` varchar(255) DEFAULT NULL,
+  `gateway_response` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`gateway_response`)),
+  `gateway_verified` tinyint(1) DEFAULT 0,
+  `mail_sent_at` timestamp NULL DEFAULT NULL,
+  `status` enum('pending','completed','failed','refunded') DEFAULT 'pending',
+  `note` varchar(255) DEFAULT NULL,
+  `created_by` bigint(20) unsigned DEFAULT NULL,
+  `created_at` datetime DEFAULT current_timestamp(),
+  `updated_at` datetime DEFAULT NULL,
+  `deleted_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `subscription_id` (`subscription_id`),
+  KEY `created_by` (`created_by`),
+  KEY `idx_pay_student` (`student_id`),
+  KEY `idx_pay_status` (`status`),
+  KEY `idx_deleted_at` (`deleted_at`),
+  KEY `payments_checkout_plan_id_foreign` (`checkout_plan_id`),
+  CONSTRAINT `payments_checkout_plan_id_foreign` FOREIGN KEY (`checkout_plan_id`) REFERENCES `checkout_plans` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `payments_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `payments_ibfk_2` FOREIGN KEY (`subscription_id`) REFERENCES `student_subscriptions` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `payments_ibfk_3` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB AUTO_INCREMENT=189 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+DROP TABLE IF EXISTS `pending_enrollments`;
+
+CREATE TABLE `pending_enrollments` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `student_id` bigint(20) unsigned NOT NULL,
+  `payment_id` bigint(20) unsigned NOT NULL,
+  `plan_id` bigint(20) unsigned NOT NULL,
+  `checkout_plan_id` bigint(20) unsigned DEFAULT NULL,
+  `resolved` tinyint(1) NOT NULL DEFAULT 0,
+  `resolved_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `pending_enrollments_payment_id_foreign` (`payment_id`),
+  KEY `pending_enrollments_plan_id_foreign` (`plan_id`),
+  KEY `pending_enrollments_checkout_plan_id_foreign` (`checkout_plan_id`),
+  KEY `idx_pending_enrollments_student_id` (`student_id`),
+  KEY `idx_pending_enrollments_resolved` (`resolved`),
+  CONSTRAINT `pending_enrollments_checkout_plan_id_foreign` FOREIGN KEY (`checkout_plan_id`) REFERENCES `checkout_plans` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `pending_enrollments_payment_id_foreign` FOREIGN KEY (`payment_id`) REFERENCES `payments` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `pending_enrollments_plan_id_foreign` FOREIGN KEY (`plan_id`) REFERENCES `plans` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `pending_enrollments_student_id_foreign` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+DROP TABLE IF EXISTS `permissions`;
+
+CREATE TABLE `permissions` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `guard_name` varchar(255) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `permissions_name_guard_name_unique` (`name`,`guard_name`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `plan_offers`;
+
+CREATE TABLE `plan_offers` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `plan_id` bigint(20) unsigned NOT NULL,
+  `title` varchar(191) DEFAULT NULL,
+  `type` enum('percentage','flat') NOT NULL,
+  `value` decimal(10,2) NOT NULL,
+  `starts_at` datetime DEFAULT NULL,
+  `ends_at` datetime DEFAULT NULL,
+  `active` tinyint(1) DEFAULT 1,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `deleted_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_plan_id` (`plan_id`),
+  KEY `idx_active` (`active`),
+  KEY `idx_deleted_at` (`deleted_at`),
+  CONSTRAINT `plan_offers_ibfk_1` FOREIGN KEY (`plan_id`) REFERENCES `plans` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=55 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+DROP TABLE IF EXISTS `plan_subjects`;
+
+CREATE TABLE `plan_subjects` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `plan_id` bigint(20) unsigned NOT NULL,
+  `subject_id` bigint(20) unsigned NOT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `deleted_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_plan_subject` (`plan_id`,`subject_id`),
+  KEY `subject_id` (`subject_id`),
+  KEY `idx_deleted_at` (`deleted_at`),
+  CONSTRAINT `plan_subjects_ibfk_1` FOREIGN KEY (`plan_id`) REFERENCES `plans` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `plan_subjects_ibfk_2` FOREIGN KEY (`subject_id`) REFERENCES `subjects` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=157 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+DROP TABLE IF EXISTS `plans`;
+
+CREATE TABLE `plans` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `board_id` bigint(20) unsigned DEFAULT NULL,
+  `class_id` bigint(20) unsigned DEFAULT NULL,
+  `title` varchar(191) NOT NULL,
+  `type` enum('single','combo','all') DEFAULT 'single',
+  `duration_days` int(11) NOT NULL,
+  `price` decimal(10,2) NOT NULL,
+  `description` text DEFAULT NULL,
+  `status` enum('active','inactive') DEFAULT 'active',
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `deleted_at` datetime DEFAULT NULL,
+  `ongoing_batches` int(10) unsigned NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  KEY `board_id` (`board_id`),
+  KEY `class_id` (`class_id`),
+  KEY `idx_type` (`type`),
+  KEY `idx_status` (`status`),
+  KEY `idx_deleted_at` (`deleted_at`),
+  CONSTRAINT `plans_ibfk_1` FOREIGN KEY (`board_id`) REFERENCES `boards` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `plans_ibfk_2` FOREIGN KEY (`class_id`) REFERENCES `classes` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB AUTO_INCREMENT=59 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+DROP TABLE IF EXISTS `practice_tests`;
+
+CREATE TABLE `practice_tests` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `batch_id` bigint(20) unsigned NOT NULL,
+  `teacher_id` bigint(20) unsigned DEFAULT NULL,
+  `title` varchar(255) DEFAULT NULL,
+  `description` text DEFAULT NULL,
+  `attachment` varchar(255) DEFAULT NULL,
+  `due_date` datetime DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `deleted_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_teacher_id` (`teacher_id`),
+  KEY `idx_deleted_at` (`deleted_at`),
+  KEY `fk_practice_tests_batch` (`batch_id`),
+  CONSTRAINT `fk_practice_tests_batch` FOREIGN KEY (`batch_id`) REFERENCES `batches` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `practice_tests_ibfk_2` FOREIGN KEY (`teacher_id`) REFERENCES `teachers` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB AUTO_INCREMENT=71 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+DROP TABLE IF EXISTS `role_has_permissions`;
+
+CREATE TABLE `role_has_permissions` (
+  `permission_id` bigint(20) unsigned NOT NULL,
+  `role_id` bigint(20) unsigned NOT NULL,
+  PRIMARY KEY (`permission_id`,`role_id`),
+  KEY `role_has_permissions_role_id_foreign` (`role_id`),
+  CONSTRAINT `role_has_permissions_permission_id_foreign` FOREIGN KEY (`permission_id`) REFERENCES `permissions` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `role_has_permissions_role_id_foreign` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `roles`;
+
+CREATE TABLE `roles` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `guard_name` varchar(255) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `roles_name_guard_name_unique` (`name`,`guard_name`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `sessions`;
+
+CREATE TABLE `sessions` (
+  `id` varchar(255) NOT NULL,
+  `user_id` bigint(20) unsigned DEFAULT NULL,
+  `ip_address` varchar(45) DEFAULT NULL,
+  `user_agent` text DEFAULT NULL,
+  `payload` longtext NOT NULL,
+  `last_activity` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `sessions_user_id_index` (`user_id`),
+  KEY `sessions_last_activity_index` (`last_activity`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `student_subscriptions`;
+
+CREATE TABLE `student_subscriptions` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `student_id` bigint(20) unsigned NOT NULL,
+  `plan_id` bigint(20) unsigned NOT NULL,
+  `start_at` datetime NOT NULL,
+  `end_at` datetime NOT NULL,
+  `status` enum('active','expired','cancelled') DEFAULT 'active',
+  `auto_renew` tinyint(1) DEFAULT 0,
+  `price_paid` decimal(10,2) DEFAULT 0.00,
+  `phonepe_order_id` varchar(255) DEFAULT NULL,
+  `reminder_5_sent` tinyint(1) NOT NULL DEFAULT 0,
+  `reminder_3_sent` tinyint(1) NOT NULL DEFAULT 0,
+  `reminder_1_sent` tinyint(1) NOT NULL DEFAULT 0,
+  `last_in_app_reminder_at` timestamp NULL DEFAULT NULL,
+  `last_email_reminder_at` timestamp NULL DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `deleted_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `plan_id` (`plan_id`),
+  KEY `idx_sub_student` (`student_id`),
+  KEY `idx_sub_status` (`status`),
+  KEY `idx_deleted_at` (`deleted_at`),
+  CONSTRAINT `student_subscriptions_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `student_subscriptions_ibfk_2` FOREIGN KEY (`plan_id`) REFERENCES `plans` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=144 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+DROP TABLE IF EXISTS `students`;
+
+CREATE TABLE `students` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) unsigned NOT NULL,
+  `student_uid` varchar(50) NOT NULL,
+  `class_id` bigint(20) unsigned DEFAULT NULL,
+  `preferred_class_label` varchar(50) DEFAULT NULL,
+  `board_id` bigint(20) unsigned DEFAULT NULL,
+  `preferred_board_label` varchar(50) DEFAULT NULL,
+  `school` varchar(255) DEFAULT NULL,
+  `city` varchar(100) DEFAULT NULL,
+  `state` varchar(100) DEFAULT NULL,
+  `dob` date DEFAULT NULL,
+  `status` enum('active','inactive','blocked') DEFAULT 'active',
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `deleted_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `user_id` (`user_id`),
+  UNIQUE KEY `student_uid` (`student_uid`),
+  KEY `idx_class` (`class_id`),
+  KEY `idx_status` (`status`),
+  KEY `idx_deleted_at` (`deleted_at`),
+  KEY `idx_students_board_id` (`board_id`),
+  CONSTRAINT `fk_students_board` FOREIGN KEY (`board_id`) REFERENCES `boards` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `students_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `students_ibfk_2` FOREIGN KEY (`class_id`) REFERENCES `classes` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+DROP TABLE IF EXISTS `subject_features`;
+
+CREATE TABLE `subject_features` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `subject_id` bigint(20) unsigned NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `description` text NOT NULL,
+  `sort_order` int(11) DEFAULT 0,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_subject_features_subject` (`subject_id`),
+  CONSTRAINT `fk_subject_features_subject` FOREIGN KEY (`subject_id`) REFERENCES `subjects` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+DROP TABLE IF EXISTS `subject_overview_points`;
+
+CREATE TABLE `subject_overview_points` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `subject_overview_id` bigint(20) unsigned NOT NULL,
+  `content` text NOT NULL,
+  `sort_order` int(11) NOT NULL DEFAULT 0,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_overview_points_overview` (`subject_overview_id`),
+  CONSTRAINT `fk_overview_points_overview` FOREIGN KEY (`subject_overview_id`) REFERENCES `subject_overviews` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+DROP TABLE IF EXISTS `subject_overviews`;
+
+CREATE TABLE `subject_overviews` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `subject_id` bigint(20) unsigned NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `pointer_type` enum('bullet','check') NOT NULL DEFAULT 'bullet',
+  `sort_order` int(11) NOT NULL DEFAULT 0,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_subject_overviews_subject` (`subject_id`),
+  CONSTRAINT `fk_subject_overviews_subject` FOREIGN KEY (`subject_id`) REFERENCES `subjects` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+DROP TABLE IF EXISTS `subject_syllabus_chapters`;
+
+CREATE TABLE `subject_syllabus_chapters` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `subject_id` bigint(20) unsigned NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `sort_order` int(11) DEFAULT 0,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_syllabus_chapters_subject` (`subject_id`),
+  CONSTRAINT `fk_syllabus_chapters_subject` FOREIGN KEY (`subject_id`) REFERENCES `subjects` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+DROP TABLE IF EXISTS `subject_syllabus_topics`;
+
+CREATE TABLE `subject_syllabus_topics` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `chapter_id` bigint(20) unsigned NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `sort_order` int(11) DEFAULT 0,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_syllabus_topics_chapter` (`chapter_id`),
+  CONSTRAINT `fk_syllabus_topics_chapter` FOREIGN KEY (`chapter_id`) REFERENCES `subject_syllabus_chapters` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+DROP TABLE IF EXISTS `subjects`;
+
+CREATE TABLE `subjects` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `board_id` bigint(20) unsigned NOT NULL,
+  `class_id` bigint(20) unsigned DEFAULT NULL,
+  `name` varchar(100) NOT NULL,
+  `icon` varchar(255) DEFAULT NULL,
+  `color` varchar(255) DEFAULT NULL,
+  `code` varchar(20) DEFAULT NULL,
+  `description` text DEFAULT NULL,
+  `status` enum('active','inactive') DEFAULT 'active',
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `deleted_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_class` (`class_id`),
+  KEY `idx_deleted_at` (`deleted_at`),
+  KEY `subjects_board_id_foreign` (`board_id`),
+  CONSTRAINT `subjects_board_id_foreign` FOREIGN KEY (`board_id`) REFERENCES `boards` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `subjects_ibfk_1` FOREIGN KEY (`class_id`) REFERENCES `classes` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+DROP TABLE IF EXISTS `teacher_teaching_experiences`;
+
+CREATE TABLE `teacher_teaching_experiences` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `teacher_id` bigint(20) unsigned NOT NULL,
+  `class_id` bigint(20) unsigned NOT NULL,
+  `subject_id` bigint(20) unsigned NOT NULL,
+  `experience_years` int(11) DEFAULT 0,
+  `description` text DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uniq_teacher_class_subject` (`teacher_id`,`class_id`,`subject_id`),
+  KEY `fk_tte_class` (`class_id`),
+  KEY `fk_tte_subject` (`subject_id`),
+  CONSTRAINT `fk_tte_class` FOREIGN KEY (`class_id`) REFERENCES `classes` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_tte_subject` FOREIGN KEY (`subject_id`) REFERENCES `subjects` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_tte_teacher` FOREIGN KEY (`teacher_id`) REFERENCES `teachers` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+DROP TABLE IF EXISTS `teachers`;
+
+CREATE TABLE `teachers` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) unsigned NOT NULL,
+  `bio` text DEFAULT NULL,
+  `city` varchar(100) DEFAULT NULL,
+  `state` varchar(100) DEFAULT NULL,
+  `contact_email` varchar(191) DEFAULT NULL,
+  `contact_mobile` varchar(20) DEFAULT NULL,
+  `salary` decimal(10,2) DEFAULT NULL,
+  `comfortable_timings` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`comfortable_timings`)),
+  `languages` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`languages`)),
+  `experience_years` int(11) DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `deleted_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `user_id` (`user_id`),
+  KEY `idx_deleted_at` (`deleted_at`),
+  CONSTRAINT `teachers_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+DROP TABLE IF EXISTS `users`;
+
+CREATE TABLE `users` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `role` enum('admin','teacher','student') NOT NULL DEFAULT 'student',
+  `name` varchar(255) NOT NULL,
+  `profile_image` varchar(255) DEFAULT NULL,
+  `email` varchar(255) NOT NULL,
+  `phone` varchar(20) DEFAULT NULL,
+  `email_verified_at` timestamp NULL DEFAULT NULL,
+  `password` varchar(255) NOT NULL,
+  `remember_token` varchar(100) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `users_email_unique` (`email`),
+  UNIQUE KEY `users_phone_unique` (`phone`)
+) ENGINE=InnoDB AUTO_INCREMENT=63 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `zoom_webhook_events`;
+
+CREATE TABLE `zoom_webhook_events` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `event_name` varchar(120) DEFAULT NULL,
+  `dedupe_key` varchar(64) NOT NULL,
+  `status` varchar(20) NOT NULL DEFAULT 'pending',
+  `received_at` timestamp NULL DEFAULT NULL,
+  `processed_at` timestamp NULL DEFAULT NULL,
+  `attempts` int(10) unsigned NOT NULL DEFAULT 0,
+  `error_message` text DEFAULT NULL,
+  `headers` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`headers`)),
+  `raw_body` longtext DEFAULT NULL,
+  `payload` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`payload`)),
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `zoom_webhook_events_dedupe_key_unique` (`dedupe_key`),
+  KEY `zoom_webhook_events_event_name_status_index` (`event_name`,`status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+SET FOREIGN_KEY_CHECKS=1;

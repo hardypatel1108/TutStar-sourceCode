@@ -1,0 +1,42 @@
+.text-blueClr {
+    color: #673de6;
+}
+
+.bg-purpleClr\/50 {
+    background-color: color-mix(in oklab, #b68cff 50%, transparent);
+}
+
+.text-orangeClr {
+    color: #ff972f;
+}
+
+/* Accordion Custom Styling */
+.faq-item {
+    @apply rounded-xl border border-border bg-white/80 shadow-sm px-10 relative;
+}
+
+.faq-trigger {
+    @apply text-blueClr text-sm md:text-base font-semibold relative flex justify-between w-full py-4;
+}
+
+.faq-content {
+    @apply text-sm text-muted-foreground pb-4;
+}
+
+/* Arrow style */
+.faq-trigger::after {
+    content: '';
+    position: absolute;
+    right: 1.5rem;
+    top: 50%;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: translateY(-50%) rotate(45deg);
+    transition: transform 0.2s ease;
+}
+
+[data-state='open'] > .faq-trigger::after {
+    transform: translateY(-50%) rotate(225deg);
+}
