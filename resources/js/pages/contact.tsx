@@ -57,7 +57,7 @@ export default function Contact() {
                                <img 
                                 src={contactUs} 
                                 alt="Contact" 
-                                className="h-auto w-[280px] mx-auto absolute top-[-8rem] left-1/2"
+                                className="h-auto md:w-[280px] w-[150px] mx-auto md:absolute top-[-8rem] left-1/2"
                                 />
                             </div>
                         </div>

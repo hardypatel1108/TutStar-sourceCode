@@ -6,7 +6,7 @@ export default function CTA() {
         <section className="w-full bg-white py-10 sm:py-14 md:py-20">
             <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 md:px-10 lg:px-20">
                 <div
-                    className="flex items-center justify-between gap-4 rounded-2xl bg-gradient-to-r from-[#ECE1FF] to-[#FFEADA] p-4 sm:p-6 md:p-8"
+                    className="flex flex-col md:flex-row items-center justify-between gap-4 rounded-2xl bg-gradient-to-r from-[#ECE1FF] to-[#FFEADA] p-4 sm:p-6 md:p-8"
                     style={{ minHeight: '120px' }}
                 >
                     {/* LEFT SIDE */}

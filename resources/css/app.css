@@ -281,10 +281,19 @@
     height: 100%;
     background-color: var(--color-blueClr);
 }
+.how-it-work-dec span:last-child::before{
+    display: none;
+}
 .why-chhose-table{
     padding-bottom: 0;
 }
 
 .why-chhose-table .border-b{
     border-bottom: 0;
+}
+
+@media (max-width:767px){
+    .how-it-work-dec span::before{
+        right: -10px;
+    }
 }

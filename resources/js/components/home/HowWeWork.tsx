@@ -44,13 +44,13 @@ export default function HowWeWork() {
                     {/* Right Text Block */}
                     <div className="md:col-span-2">
                         {/* Floating image + badge */}
-                        <div className="relative flex justify-end">
+                        <div className="relative flex md:justify-end justify-center">
                             <div className="relative">
                                 {/* <div className="absolute -left-6 top-8 h-28 w-28 rounded-full bg-[#C9B5FF] opacity-60 blur-[18px]" /> */}
                                 <img
                                     src={works}
                                     alt="how-it-works-2"
-                                    className="z-10 h-24 w-24 rounded-3xl object-cover sm:h-32 sm:w-32 md:h-60 md:w-60"
+                                    className="z-10 w-40 md:h-24 md:w-24 rounded-3xl object-cover sm:h-32 sm:w-32 md:h-60 md:w-60"
                                 />
                                 {/* <img
                                     src={circle}
@@ -62,7 +62,7 @@ export default function HowWeWork() {
 
                         {/* Content */}
                         <div className="mt-8 sm:mt-10">
-                            <p className="mb-2 text-sm font-semibold text-[#7C4DFF] sm:text-base md:text-lg flex gap-10 how-it-work-dec">
+                            <p className="mb-2 text-sm font-semibold text-[#7C4DFF] sm:text-base md:text-lg flex gap-5 md:gap-10 how-it-work-dec">
                                 <span>Real Teachers</span>
                                 <span>Real Support</span>
                                 <span>Real Growth</span>

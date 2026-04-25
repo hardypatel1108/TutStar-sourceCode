@@ -37,7 +37,7 @@ export default function WhyChooseSection() {
                             Choose <span className="text-[#5B3DF5]">TutStar</span>
                         </span>
                     </h3>
-                    <img src={titleimg} alt="" className='absolute right-0 top-0 h-40 w-auto'/>
+                    <img src={titleimg} alt="" className='absolute right-0 top-10 md:top-0 md:h-40 h-30 w-auto'/>
                 </div>
 
                 <div className="grid grid-cols-1 items-start lg:grid-cols-[1.4fr_0.8fr] pt-20 gap-5">

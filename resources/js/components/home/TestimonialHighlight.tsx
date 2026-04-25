@@ -53,7 +53,7 @@ export default function TestimonialHighlight() {
 
                     {/* Right carousel */}
                     <div className="relative min-w-0">
-                        <div className="pointer-events-none absolute -right-10 top-10 h-40 w-40 rounded-full bg-[#F7C65F] opacity-30 blur-2xl" />
+                        <div className="pointer-events-none absolute -right-10 top-10 hidden h-40 w-40 md:block rounded-full bg-[#F7C65F] opacity-30 blur-2xl" />
                         <Carousel
                             opts={{ align: 'start', loop: true }}
                             plugins={[

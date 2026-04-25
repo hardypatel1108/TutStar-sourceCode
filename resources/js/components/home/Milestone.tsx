@@ -29,11 +29,11 @@ export default function Milestone() {
                     </div>
 
                     {/* RIGHT TEXT BLOCK */}
-                    <div className="relative z-10 flex w-full flex-col justify-center gap-7 p-4 pt-0 text-right text-white sm:gap-8 sm:p-6 sm:pt-0 md:ml-auto md:w-1/2 md:p-8 md:pt-0">
+                    <div className="relative z-10 flex w-full flex-col justify-center gap-7 p-4 md:pt-0 text-right text-white sm:gap-8 sm:p-6 sm:pt-0 md:ml-auto md:w-1/2 md:p-8 md:pt-0">
                         {/* FIRST BLOCK */}
                         <div>
                             <p className="text-xl font-semibold text-[#FFC566] sm:text-2xl">Broad Vision</p>
-                            <p className="mb-6 mt-2 text-sm leading-6 text-white/90 sm:text-base">
+                            <p className="md:mb-6 mb-0 mt-2 text-sm leading-6 text-white/90 sm:text-base">
                                 We aim to create a learning environment with no pressure on students, focused on real growth, while supporting
                                 parents with affordable fees -- all delivered through our powerful platform.
                             </p>
