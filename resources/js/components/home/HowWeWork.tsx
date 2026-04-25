@@ -1,10 +1,11 @@
 import avatar1 from '@/assets/images/home/how-it-works/avatar1.png';
 import avatar2 from '@/assets/images/home/how-it-works/avatar2.png';
 import worksimg from '@/assets/images/home/how-it-works/how-it-works-img.png';
-import worksimg2 from '@/assets/images/home/how-it-works/how-it-works-img2.jpg';
+// import worksimg2 from '@/assets/images/home/how-it-works/how-it-works-img2.jpg';
 import airplane from '@/assets/svgs/home/how-it-works/airplane.svg';
-import circle from '@/assets/svgs/home/how-it-works/how-it-works-circle.svg';
+// import circle from '@/assets/svgs/home/how-it-works/how-it-works-circle.svg';
 import widget from '@/assets/svgs/home/how-it-works/how-it-work-widget.svg';
+import works from '@/assets/svgs/home/how-it-works/how-it-work-right.png';
 
 export default function HowWeWork() {
     return (
@@ -45,30 +46,33 @@ export default function HowWeWork() {
                         {/* Floating image + badge */}
                         <div className="relative flex justify-end">
                             <div className="relative">
-                                <div className="absolute -left-6 top-8 h-28 w-28 rounded-full bg-[#C9B5FF] opacity-60 blur-[18px]" />
+                                {/* <div className="absolute -left-6 top-8 h-28 w-28 rounded-full bg-[#C9B5FF] opacity-60 blur-[18px]" /> */}
                                 <img
-                                    src={worksimg2}
+                                    src={works}
                                     alt="how-it-works-2"
-                                    className="z-10 h-24 w-24 rounded-3xl object-cover shadow-[0_12px_24px_rgba(103,61,230,0.25)] sm:h-32 sm:w-32 md:h-40 md:w-40"
+                                    className="z-10 h-24 w-24 rounded-3xl object-cover sm:h-32 sm:w-32 md:h-60 md:w-60"
                                 />
-                                <img
+                                {/* <img
                                     src={circle}
                                     alt="trusted badge"
                                     className="absolute -left-4 bottom-0 z-20 h-16 w-16 sm:h-20 sm:w-20"
-                                />
+                                /> */}
                             </div>
                         </div>
 
                         {/* Content */}
                         <div className="mt-8 sm:mt-10">
-                            <p className="mb-2 text-sm font-semibold text-[#7C4DFF] sm:text-base md:text-lg">
-                                Real Teachers&nbsp;&nbsp; Real Support&nbsp;&nbsp; Real Growth
+                            <p className="mb-2 text-sm font-semibold text-[#7C4DFF] sm:text-base md:text-lg flex gap-10 how-it-work-dec">
+                                <span>Real Teachers</span>
+                                <span>Real Support</span>
+                                <span>Real Growth</span>
                             </p>
 
                             <p className="text-sm leading-6 text-neutral-800 sm:text-base md:leading-7">
-                                At TutStar, we believe learning works best when it's simple and structured. Our teachers focus on explaining
-                                concepts clearly, solving doubts instantly, and giving practical assignments that build confidence step by
-                                step. With the right support, every student can achieve real growth.
+                                Just choose your class, subscribe monthly, and start learning. Attend live classes directly from your dashboard, study with your batch mates, and clear your <span className='text-[#673DE6]'>doubts in real time</span> — simple and hassle-free. 
+                            </p>
+                            <p className="text-sm leading-6 text-neutral-800 sm:text-base md:leading-7">
+                                After you enroll, <span className='text-[#673DE6]'>our team personally connects</span> with you to understand your goals and guide your learning journey.
                             </p>
 
                             <div className="mt-6 flex justify-start">

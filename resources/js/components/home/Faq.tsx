@@ -28,18 +28,12 @@ const faqs = [
 export default function Faq() {
     return (
         <section className="w-full bg-[#FAFBFF] py-12 sm:py-16 md:py-20">
-            <div className="mx-auto w-full max-w-4xl px-4 sm:px-6 md:px-10 lg:px-12">
+            <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 md:px-10 lg:px-12">
                 {/* Heading */}
                 <div className="mb-10 text-center">
-                    <div className="mb-3 inline-block rounded-full bg-[#ECE8FF] px-4 py-1.5 text-xs font-semibold text-[#673DE6]">
-                        GOT QUESTIONS?
-                    </div>
                     <p className="text-2xl font-bold text-neutral-800 sm:text-3xl md:text-5xl">
                         Your Doubts, Clarified..{' '}
                         <span className="text-[#FF972F]">FAQs</span>
-                    </p>
-                    <p className="mt-3 text-sm text-neutral-500 sm:text-base">
-                        Everything you need to know about TutStar
                     </p>
                 </div>
 
@@ -49,7 +43,7 @@ export default function Faq() {
                         <AccordionItem
                             key={idx}
                             value={`item-${idx}`}
-                            className="overflow-hidden rounded-2xl border border-[#E5DEFF] bg-white shadow-[0_2px_12px_rgba(103,61,230,0.08)] transition-shadow data-[state=open]:shadow-[0_6px_24px_rgba(103,61,230,0.15)]"
+                            className="overflow-hidden rounded-2xl border border-[#E5DEFF] bg-[#F7EAFD] shadow-[0_2px_12px_rgba(103,61,230,0.08)] transition-shadow data-[state=open]:shadow-[0_6px_24px_rgba(103,61,230,0.15)]"
                         >
                             <AccordionTrigger className="px-5 py-4 text-left text-sm font-semibold text-[#673DE6] hover:no-underline sm:px-6 sm:text-base [&[data-state=open]]:text-[#4925c4]">
                                 {faq.q}

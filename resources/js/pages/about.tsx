@@ -2,6 +2,7 @@ import about12 from '@/assets/images/about/about-1-2.png';
 import about1 from '@/assets/images/about/about-1.png';
 import about22 from '@/assets/images/about/about-2-2.png';
 import about2 from '@/assets/images/about/about-2.png';
+import linkdine from '@/assets/images/about/linkdine.svg';
 import visionbg from '@/assets/images/about/vision-bg-img.png';
 import pencil from '@/assets/svgs/about/pencil.svg';
 import yellowLine from '@/assets/svgs/about/yellow-line.svg';
@@ -32,7 +33,7 @@ export default function About() {
                         <section className="customContainer py-10 sm:py-12 md:py-14 lg:py-16">
                             <div className="grid items-center gap-8 lg:grid-cols-2">
                                 <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
-                                    <h1 className="my-6 text-3xl font-semibold text-pretty lg:text-5xl text-[#222222]">
+                                    <h1 className="my-6 text-3xl font-semibold text-pretty text-[#222222] lg:text-5xl">
                                         We{' '}
                                         <span className="relative">
                                             are... <img src={yellowLine} className="absolute -bottom-1 left-0" alt="" />
@@ -67,25 +68,42 @@ export default function About() {
                         <section className="customContainer py-10 sm:py-12 md:py-14 lg:py-16">
                             <div className="grid items-center gap-8 lg:grid-cols-2">
                                 <div className="order-2 md:order-1">
-                                    <div className="relative">
-                                        <img src={about2} alt="" className="relative z-10 max-h-60 w-full rounded-md object-contain" />
-                                        <img
-                                            src={about22}
-                                            className="absolute bottom-0 left-1/2 max-h-42 w-full -translate-x-1/2 rounded-md object-contain"
-                                            alt=""
-                                        />
+                                    <div className="mx-auto flex w-full max-w-[19rem] flex-col items-center sm:max-w-[24rem] lg:max-w-[29rem]">
+                                        <div className="relative flex h-[19rem] w-full items-end justify-center sm:h-[24rem] lg:h-[28rem]">
+                                            <div className="absolute top-[3.5rem] left-1/2 h-[9rem] w-[10rem] -translate-x-1/2 rounded-full bg-[#F4EEFF] blur-[42px] sm:top-[4.5rem] sm:h-[12rem] sm:w-[14rem] sm:blur-[56px] lg:top-[5.25rem] lg:h-[16rem] lg:w-[20rem] lg:blur-[78px]" />
+                                            <div className="absolute top-[6.25rem] left-1/2 h-[10rem] w-[12rem] -translate-x-1/2 rounded-full bg-[#D9C5FF]/45 blur-[32px] sm:top-[7rem] sm:h-[12rem] sm:w-[15rem] sm:blur-[38px] lg:top-[8.25rem] lg:h-[13rem] lg:w-[17rem] lg:blur-[46px]" />
+                                            <div className="absolute bottom-[2rem] left-1/2 h-[7.5rem] w-[12rem] -translate-x-1/2 rounded-full bg-[#9A63FF]/48 blur-[22px] sm:h-[9rem] sm:w-[15rem] sm:blur-[26px] lg:bottom-[2.5rem] lg:h-[11rem] lg:w-[18rem] lg:blur-[30px]" />
+                                            {/* <img
+                                                src={about22}
+                                                className="pointer-events-none absolute bottom-[1.25rem] left-1/2 w-[16rem] max-w-none -translate-x-1/2 opacity-95 sm:bottom-[1.5rem] sm:w-[20rem] lg:bottom-[2rem] lg:w-[24rem]"
+                                                alt=""
+                                            /> */}
+                                            {/* <div className="absolute bottom-[1.15rem] left-1/2 h-[3px] w-[15.5rem] -translate-x-1/2 rounded-full bg-[#8753FF] sm:bottom-[1.35rem] sm:w-[19.5rem] lg:bottom-[1.85rem] lg:w-[24rem]" /> */}
+                                            <img
+                                                src={about2}
+                                                alt=""
+                                                className="relative z-10 w-[13rem] max-w-full object-contain sm:w-[16.5rem] lg:w-[21rem]"
+                                            />
+                                        </div>
                                     </div>
-                                    <div className="mt-2 flex flex-col items-center">
+                                    <div className="mt-1 flex flex-col items-center text-center">
                                         <p className="text-lg font-semibold text-[#000000]">Priya Ray</p>
                                         <p className="mb-1 text-sm text-[#353333]">Founder, CEO</p>
-                                        <Link href="/" >
-                                            <Linkedin className="h-5 w-5 text-[#353333]" />
+                                        <Link
+                                            href="/"
+                                            className="mt-1 flex h-6 w-6 items-center justify-center rounded-[6px] text-[#353333] transition-colors hover:border-[#673DE6] hover:text-[#673DE6]"
+                                        >
+                                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M6 9V14M6 6V6.01M10 14V9M14 14V11C14 10.4696 13.7893 9.96086 13.4142 9.58579C13.0391 9.21071 12.5304 9 12 9C11.4696 9 10.9609 9.21071 10.5858 9.58579C10.2107 9.96086 10 10.4696 10 11" stroke="#353333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                                <path d="M1 5C1 3.93913 1.42143 2.92172 2.17157 2.17157C2.92172 1.42143 3.93913 1 5 1H15C16.0609 1 17.0783 1.42143 17.8284 2.17157C18.5786 2.92172 19 3.93913 19 5V15C19 16.0609 18.5786 17.0783 17.8284 17.8284C17.0783 18.5786 16.0609 19 15 19H5C3.93913 19 2.92172 18.5786 2.17157 17.8284C1.42143 17.0783 1 16.0609 1 15V5Z" stroke="#353333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                            </svg>
+
                                         </Link>
                                     </div>
                                 </div>
 
                                 <div className="order-1 flex flex-col items-end text-right md:order-2">
-                                    <h1 className="my-6 text-3xl font-semibold text-pretty lg:text-5xl text-[#222222]">Founder Thought</h1>
+                                    <h1 className="my-6 text-3xl font-semibold text-pretty text-[#222222] lg:text-5xl">Founder Thought</h1>
                                     <p className="mb-2 max-w-xl leading-6 font-medium text-neutral-700 lg:text-xl">
                                         Because Students Need Much More Than Just Videos
                                     </p>
@@ -107,17 +125,20 @@ export default function About() {
                                 <div key={i}>
                                     <div className="relative">
                                         <img src={about2} alt="" className="relative z-10 max-h-28 w-full rounded-md object-contain md:max-h-60" />
-                                        <img
-                                            src={about22}
-                                            className="absolute bottom-0 left-1/2 max-h-48 w-full -translate-x-3/4 rounded-md object-contain"
-                                            alt=""
-                                        />
+                                            {/* <img
+                                                src={about22}
+                                                className="absolute bottom-0 left-1/2 max-h-48 w-full -translate-x-3/4 rounded-md object-contain"
+                                                alt=""
+                                            /> */}
                                     </div>
                                     <div className="mt-2 flex flex-col items-center">
                                         <p className="text-lg font-semibold text-[#000000]">Priya Ray</p>
                                         <p className="mb-1 text-sm text-[#353333]">Founder, CEO</p>
                                         <a href="https://linkedin.com/">
-                                            <Linkedin className="h-5 w-5 text-[#353333]" />
+                                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M6 9V14M6 6V6.01M10 14V9M14 14V11C14 10.4696 13.7893 9.96086 13.4142 9.58579C13.0391 9.21071 12.5304 9 12 9C11.4696 9 10.9609 9.21071 10.5858 9.58579C10.2107 9.96086 10 10.4696 10 11" stroke="#353333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                                <path d="M1 5C1 3.93913 1.42143 2.92172 2.17157 2.17157C2.92172 1.42143 3.93913 1 5 1H15C16.0609 1 17.0783 1.42143 17.8284 2.17157C18.5786 2.92172 19 3.93913 19 5V15C19 16.0609 18.5786 17.0783 17.8284 17.8284C17.0783 18.5786 16.0609 19 15 19H5C3.93913 19 2.92172 18.5786 2.17157 17.8284C1.42143 17.0783 1 16.0609 1 15V5Z" stroke="#353333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                            </svg>
                                         </a>
                                     </div>
                                 </div>
@@ -126,7 +147,7 @@ export default function About() {
 
                         {/* Section 4: Vision / Milestones */}
                         <section className="customContainer">
-                            <p className="mb-4 flex items-center justify-end gap-2 text-3xl font-semibold md:text-4xl text-[#222222]">
+                            <p className="mb-4 flex items-center justify-end gap-2 text-3xl font-semibold text-[#222222] md:text-4xl">
                                 Milestones Ahead <img src={pencil} className="max-h-8" alt="" />
                             </p>
                             <div

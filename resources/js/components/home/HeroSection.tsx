@@ -10,12 +10,7 @@ import { CheckCircle, Star } from 'lucide-react';
 export default function HeroSection() {
     return (
         <section
-            className="relative overflow-hidden pt-20 pb-10 sm:pt-24 sm:pb-14 md:pt-28 md:pb-16"
-            style={{
-                background:
-                    'linear-gradient(135deg, #ede8ff 0%, #d9d0ff 30%, #c4b5f5 60%, #b8aaf0 100%)',
-            }}
-        >
+            className="relative overflow-hidden pt-20 pb-10 sm:pt-24 sm:pb-14 md:pt-28 md:pb-16">
             {/* Decorative left shape */}
             <img
                 src={hero_left_shape}
@@ -37,39 +32,23 @@ export default function HeroSection() {
                     </div>
 
                     {/* Heading — big-letter Figma style */}
-                    <h1 className="text-[3.2rem] font-extrabold leading-tight text-[#673DE6] sm:text-[4rem] md:text-[4.5rem] lg:text-[5rem]">
-                        {/* Line 1: big B + small "e the" */}
-                        B<span className="text-xl font-semibold text-[#673DE6] sm:text-3xl md:text-4xl">e the</span>
-
-                        <br />
-
-                        {/* Line 2: big S + small "tar of" + dark "your Class" (yellow underline) */}
-                        S<span className="text-xl font-semibold text-[#673DE6] sm:text-3xl md:text-4xl">
-                            tar of{' '}
-                            <span className="relative ml-1 inline-block text-gray-700">
-                                your Class
-                                <img
-                                    src={yellow_line}
-                                    alt=""
-                                    className="absolute -bottom-1 left-0 w-full sm:-bottom-1.5"
-                                />
-                            </span>
-                        </span>
+                    <h1 className="text-[25px] font-semibold leading-tight text-[#353333] sm:text-[4rem] md:text-[40px] lg:text-[50px]">
+                        Be the Star of Your Class With <span className="font-extrabold text-[#673DE6]">Real Learning</span>
                     </h1>
 
-                    {/* Sub-headline */}
+                    {/* Sub-headline
                     <p className="mt-3 text-lg font-semibold text-[#4a3580] sm:text-xl md:text-2xl">
                         With Real Learning
-                    </p>
+                    </p> */}
 
                     {/* Feature pills */}
                     <div className="mx-auto mt-5 max-w-xs space-y-3 md:mx-0 md:max-w-sm">
-                        {['Real two way Live classes', 'Expert Teachers', 'Ultra small batch'].map((item) => (
+                        {['2 Way Interactive Live Classes', 'Expert & Supportive Teachers', 'Small Batches (Just 10 Students)'].map((item) => (
                             <div key={item} className="flex items-center gap-3">
-                                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#673DE6]">
-                                    <CheckCircle className="h-5 w-5 fill-[#673DE6] text-white" />
+                                <div className="flex h-7 w-7 shrink-0 items-center justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="30px" height="30px" viewBox="0 0 640 640" fill="#57D9B0"><path d="M320 576C178.6 576 64 461.4 64 320C64 178.6 178.6 64 320 64C461.4 64 576 178.6 576 320C576 461.4 461.4 576 320 576zM438 209.7C427.3 201.9 412.3 204.3 404.5 215L285.1 379.2L233 327.1C223.6 317.7 208.4 317.7 199.1 327.1C189.8 336.5 189.7 351.7 199.1 361L271.1 433C276.1 438 282.9 440.5 289.9 440C296.9 439.5 303.3 435.9 307.4 430.2L443.3 243.2C451.1 232.5 448.7 217.5 438 209.7z"/></svg>
                                 </div>
-                                <div className="flex-1 rounded-xl bg-[#FFECDA] px-4 py-2 text-left text-sm font-semibold text-[#673DE6] sm:text-base">
+                                <div className="flex-1 rounded-xl text-left text-sm font-semibold text-[#353333] sm:text-base">
                                     {item}
                                 </div>
                             </div>
@@ -97,8 +76,8 @@ export default function HeroSection() {
                     {/* CTA button */}
                     <div className="mt-6 flex justify-center md:justify-start">
                         <Link href="/courses">
-                            <Button className="rounded-full bg-[#673DE6] px-8 py-5 text-base font-bold text-white hover:bg-[#5432c4] sm:px-10 sm:py-6 sm:text-lg">
-                                Start Learning
+                            <Button className="bg-[#673DE6] px-8 py-7 text-base font-bold text-white hover:bg-[#5432c4] sm:px-10 sm:py-6 sm:text-lg">
+                                Join Your First Class 
                             </Button>
                         </Link>
                     </div>

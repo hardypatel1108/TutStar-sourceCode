@@ -97,6 +97,10 @@ Route::get('/about-us', function () {
     return Inertia::render('about');
 })->name('about');
 
+Route::get('/contact', function () {
+    return Inertia::render('contact');
+})->name('contact');
+
 Route::resource('/class', ClazzController::class)->names('clazz');
 Route::get('/plan/{boardSlug}/{classSlug}', [PlanController::class, 'show'])->name('plan.show');
 Route::get('/plans/{classId}/{type}', [PlanSubjectController::class, 'index'])->name('plans.index');

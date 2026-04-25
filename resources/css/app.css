@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
 @import 'tailwindcss';
 
 
@@ -14,7 +15,7 @@
 
 @theme {
      --font-sans:
-        'inter','Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+        'DM Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 
     --radius-lg: var(--radius);
     --radius-md: calc(var(--radius) - 2px);
@@ -142,6 +143,7 @@
 
     body {
         @apply bg-background text-foreground;
+        font-family: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
     }
      html {
         overflow-y: scroll;
@@ -264,4 +266,25 @@
 /* Splide slider active dot */
 #classesSlider .splide__pagination__page.is-active {
     background-color: var(--color-blueClr);
+}
+
+.how-it-work-dec span{
+    position: relative;
+}
+.how-it-work-dec span::before{
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: -20px;
+    transform: translateY(-50%);
+    width: 2px;
+    height: 100%;
+    background-color: var(--color-blueClr);
+}
+.why-chhose-table{
+    padding-bottom: 0;
+}
+
+.why-chhose-table .border-b{
+    border-bottom: 0;
 }
