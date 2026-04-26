@@ -18,16 +18,9 @@ export default function Register() {
         <div className="flex h-screen w-full overflow-hidden bg-white font-sans">
             <Head title="Sign Up" />
 
-            {/* Left Column - Graphic */}
-            <div className="relative hidden w-1/2 items-center justify-center bg-[#F9F8FF] lg:flex">
-                <div className="relative flex h-full w-full items-center justify-center p-20">
-                    <img src={signupimage} alt="Signup Graphic" className="w-full object-cover" />
-                </div>
-            </div>
-
-            {/* Right Column - Form */}
+            {/* Left Column - Form */}
             <div className="flex w-full flex-col overflow-y-auto p-8 sm:p-12 md:p-20 lg:w-1/2">
-                <div className="mb-8 flex justify-end">
+                <div className="mb-8">
                     <Link href="/" className="text-2xl font-bold tracking-tight text-[#6C3CF0]">
                         Tut<span className="text-[#1a1a1a]">Star</span>
                     </Link>
@@ -198,6 +191,13 @@ export default function Register() {
                             </>
                         )}
                     </Form>
+                </div>
+            </div>
+
+            {/* Right Column - Graphic */}
+            <div className="relative hidden w-1/2 items-center justify-center bg-[#F9F8FF] lg:flex">
+                <div className="relative flex h-full w-full items-center justify-center p-20">
+                    <img src={signupimage} alt="Signup Graphic" className="w-full object-cover" />
                 </div>
             </div>
         </div>

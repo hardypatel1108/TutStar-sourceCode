@@ -1,53 +1,65 @@
+import trusted1 from '@/assets/svgs/home/trusted/trusted1.png';
+import trusted2 from '@/assets/svgs/home/trusted/trusted2.png';
+import trusted3 from '@/assets/svgs/home/trusted/trusted3.png';
+import trusted4 from '@/assets/svgs/home/trusted/trusted4.png';
+import trusted5 from '@/assets/svgs/home/trusted/trusted5.png';
+import trusted6 from '@/assets/svgs/home/trusted/trusted6.png';
+
 export default function TrustedBy() {
     const items = [
-        { icon: 'fa-user-group', title: '1000+', subtitle: 'Students' },
-        { icon: 'fa-bullseye', title: '10', subtitle: 'per Batch' },
-        { icon: 'fa-book', title: 'Board-Focused', subtitle: 'Learning' },
-        { icon: 'fa-handshake', title: 'Guidance', subtitle: 'from Day One' },
-        { icon: 'fa-comments', title: '2-Way', subtitle: 'Live Classes' },
-        { icon: 'fa-coins', title: 'Affordable', subtitle: 'Plans' },
+        { icon: trusted1, text: ['5000+', 'Students'] },
+        { icon: trusted2, text: ['10', 'Per Batch'] },
+        { icon: trusted3, text: ['Board Focused', 'Learning'] },
+        { icon: trusted4, text: ['Guidance', 'From Day One'] },
+        { icon: trusted5, text: ['2 Way', 'Live Class'] },
+        { icon: trusted6, text: ['Affordable', 'Plans'] },
     ];
 
     return (
-        <section className="w-full bg-white py-6 sm:py-8">
-            <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 md:px-10 lg:px-20">
-                {/* Gradient border wrapper */}
-                <div
-                    className="rounded-[28px] p-[2px] shadow-[0_18px_50px_rgba(85,96,210,0.4)]"
-                    style={{
-                        background: 'linear-gradient(135deg, #6E7BFF 0%, #7F8BFF 45%, #8B7BFF 100%)',
-                    }}
-                >
-                    {/* Inner card */}
-                    <div
-                        className="rounded-[26px] px-4 py-5 sm:px-6 sm:py-6"
-                        style={{
-                            background:
-                                'radial-gradient(1200px 300px at 10% 0%, rgba(255,255,255,0.85), transparent 60%), radial-gradient(900px 260px at 100% 0%, rgba(255,255,255,0.9), transparent 60%), #EEF2FF',
-                        }}
-                    >
-                        {/* Header */}
-                        <div className="mb-4 flex items-center justify-center gap-2 text-[#3E4BAF]">
-                            <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-white shadow-sm">
-                                <i className="fa-solid fa-check text-sm text-[#3E4BAF]" />
-                            </span>
-                            <p className="text-base font-semibold sm:text-lg">Trusted by Students &amp; Parents</p>
-                        </div>
+        <section className="w-full bg-white py-8 sm:py-12 font-sans">
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div className="rounded-[32px] bg-[#F1F1F1] p-4 sm:p-6 md:p-8">
+                    <h2 className="mb-8 text-center text-xl font-bold text-[#444444] sm:text-2xl md:text-3xl">
+                        Trusted by <span className="text-[#6C3CF0]">Students and Parents</span>
+                    </h2>
 
-                        {/* Stats grid */}
-                        <div className="grid grid-cols-2 gap-4 rounded-2xl bg-white/70 p-4 sm:grid-cols-3 lg:grid-cols-6 lg:gap-0 lg:p-5">
+                    <div className="overflow-hidden rounded-[24px] bg-white">
+                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6">
                             {items.map((item, index) => (
                                 <div
-                                    key={item.title}
-                                    className={`flex flex-col items-center justify-center gap-2 px-2 py-2 text-center ${
-                                        index !== 0 ? 'lg:border-l lg:border-[#D7DEFF]' : ''
-                                    }`}
+                                    key={index}
+                                    className={`relative flex flex-col items-center justify-center px-2 py-8 text-center transition-all hover:bg-neutral-50/50
+                                        ${index < items.length - 2 ? 'border-b border-[#E5E5E5] lg:border-b-0' : ''}
+                                        ${index < items.length - 3 ? 'sm:border-b sm:border-[#E5E5E5] lg:border-b-0' : ''}
+                                        lg:border-b-0
+                                    `}
                                 >
-                                    <i className={`fa-solid ${item.icon} text-3xl text-[#4C7CFF]`} />
-                                    <div className="leading-tight">
-                                        <p className="text-base font-semibold text-[#343C7A]">{item.title}</p>
-                                        <p className="text-xs text-[#5D6696] sm:text-sm">{item.subtitle}</p>
+                                    <div className="mb-3 flex h-12 w-12 items-center justify-center sm:h-14 sm:w-14">
+                                        <img src={item.icon} alt="" className="h-full w-full object-contain" />
                                     </div>
+                                    <div className="space-y-0.5">
+                                        {item.text.map((line, i) => (
+                                            <p key={i} className="text-xs font-bold text-[#1A1A1A] leading-tight sm:text-sm md:text-base">
+                                                {line}
+                                            </p>
+                                        ))}
+                                    </div>
+
+                                    {/* Vertical Divider - Floating Style */}
+                                    {/* Desktop: Every item except the last one */}
+                                    {index !== items.length - 1 && (
+                                        <div className="absolute right-0 top-1/2 hidden h-1/2 w-[1.5px] -translate-y-1/2 bg-[#E5E5E5] lg:block" />
+                                    )}
+
+                                    {/* Tablet: Every item except the last in each row (3-col) */}
+                                    {(index + 1) % 3 !== 0 && (
+                                        <div className="absolute right-0 top-1/2 hidden h-1/2 w-[1.5px] -translate-y-1/2 bg-[#E5E5E5] sm:block lg:hidden" />
+                                    )}
+
+                                    {/* Mobile: Every item except the last in each row (2-col) */}
+                                    {(index + 1) % 2 !== 0 && (
+                                        <div className="absolute right-0 top-1/2 block h-1/2 w-[1.5px] -translate-y-1/2 bg-[#E5E5E5] sm:hidden" />
+                                    )}
                                 </div>
                             ))}
                         </div>

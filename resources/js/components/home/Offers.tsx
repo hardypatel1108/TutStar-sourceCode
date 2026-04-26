@@ -2,7 +2,14 @@ import { Link } from '@inertiajs/react';
 import { ChevronRight } from 'lucide-react';
 import { index } from '@/routes/clazz';
 
-type Board = {
+import classes1 from '@/assets/svgs/home/Classes/classes1.png';
+import classes2 from '@/assets/svgs/home/Classes/classes2.png';
+import classes3 from '@/assets/svgs/home/Classes/classes3.png';
+import classes4 from '@/assets/svgs/home/Classes/classes4.png';
+import classes5 from '@/assets/svgs/home/Classes/classes5.png';
+import classes6 from '@/assets/svgs/home/Classes/classes6.png';
+
+type BoardProp = {
     id: number;
     name: string;
     description?: string;
@@ -10,39 +17,55 @@ type Board = {
     slug: string;
 };
 
-export default function Offers({ boards = [] }: { boards?: Board[] }) {
+export default function Offers({ boards: propBoards = [] }: { boards?: BoardProp[] }) {
+    // Static mapping for design matching, fall back to propBoards if needed
+    const staticBoards = [
+        { name: 'CBSC', logo: classes1, slug: 'cbsc' },
+        { name: 'ICSC', logo: classes2, slug: 'icsc' },
+        { name: 'MP Board', logo: classes3, slug: 'mp-board' },
+        { name: 'UP Board', logo: classes4, slug: 'up-board' },
+        { name: 'RAJ Board', logo: classes5, slug: 'raj-board' },
+        { name: 'UK Board', logo: classes6, slug: 'uk-board' },
+    ];
+
+    // Use static boards if propBoards is empty (for demo/design phase)
+    const boardsToDisplay = propBoards.length > 0 
+        ? propBoards.map((b, i) => ({
+            name: b.name,
+            logo: staticBoards[i % staticBoards.length].logo, // Use high quality assets
+            slug: b.slug
+        }))
+        : staticBoards;
+
     return (
-        <section className="w-full bg-white py-10 sm:py-12 md:py-16">
-            <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 md:px-10 lg:px-20">
+        <section className="w-full bg-white py-12 md:py-24 font-sans">
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 {/* Heading */}
-                <div className="mb-8 text-center md:mb-12">
-                    <h3 className="text-2xl font-semibold sm:text-3xl md:text-4xl">We offer Classes</h3>
-                    <p className="text-sm text-neutral-700 sm:text-base md:text-lg">Choose your Board and go...</p>
+                <div className="mb-14 text-center">
+                    <h2 className="text-4xl font-bold text-[#1a1a1a] mb-3 sm:text-5xl">We offer Classes</h2>
+                    <p className="text-xl text-neutral-600">Choose your Board and go...</p>
                 </div>
 
                 {/* Grid */}
-                <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:gap-6">
-                    {boards.map((board) => (
+                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                    {boardsToDisplay.map((board, idx) => (
                         <Link
-                            key={board.id}
+                            key={idx}
                             href={index.url({ query: { board: board.slug } })}
-                            className="flex items-center gap-2 rounded-2xl border border-[#d6c6ff] bg-[#F6F0FF] p-2 shadow-[0_6px_18px_rgba(145,95,255,0.18)] transition-transform hover:scale-[1.03] sm:gap-3 sm:p-3 md:gap-4 md:p-4"
+                            className="group flex items-center justify-between rounded-[24px] border border-[#E9E4FF] bg-[#F3EFFF] p-4 transition-all hover:border-[#6C3CF0] hover:shadow-[0_10px_30px_rgba(108,60,240,0.1)] sm:p-5"
                         >
-                            {/* Logo */}
-                            <img
-                                src={`/storage/${board.logo}`}
-                                alt={board.name}
-                                className="h-10 w-10 object-contain sm:h-14 sm:w-14 md:h-16 md:w-16"
-                            />
-
-                            {/* Text */}
-                            <p className="min-w-0 flex-1 break-words text-xs font-semibold uppercase text-neutral-900 sm:text-sm md:text-lg">
-                                {board.name}
-                            </p>
-
-                            {/* Arrow */}
-                            <div className="shrink-0 rounded-full bg-white p-1 shadow sm:p-2">
-                                <ChevronRight className="h-4 w-4 text-[#8b5cf6] sm:h-5 sm:w-5 md:h-6 md:w-6" />
+                            <div className="flex items-center gap-4 sm:gap-6">
+                                <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-white shadow-sm ring-1 ring-black/5 sm:h-24 sm:w-24 overflow-hidden p-1">
+                                    <img 
+                                        src={board.logo} 
+                                        alt={board.name} 
+                                        className="h-full w-full object-contain p-2" 
+                                    />
+                                </div>
+                                <span className="text-xl font-bold text-[#1a1a1a] sm:text-2xl">{board.name}</span>
+                            </div>
+                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-[#6C3CF0] shadow-sm transition-transform group-hover:translate-x-1 sm:h-12 sm:w-12">
+                                <ChevronRight className="h-6 w-6" strokeWidth={3} />
                             </div>
                         </Link>
                     ))}
