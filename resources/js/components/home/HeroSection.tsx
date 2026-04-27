@@ -5,7 +5,7 @@ import yellow_line from '@/assets/svgs/home/yellow-line.svg';
 
 import { Button } from '@/components/ui/button';
 import { Link } from '@inertiajs/react';
-import { CheckCircle, Star } from 'lucide-react';
+import { Users, Presentation, ArrowDown } from 'lucide-react';
 
 export default function HeroSection() {
     return (
@@ -55,11 +55,15 @@ export default function HeroSection() {
                         ))}
                     </div>
 
-                    {/* Star rating line */}
-                    <div className="mx-auto mt-4 max-w-xs px-1 md:mx-0 md:max-w-sm">
-                        <div className="relative pl-7 text-sm font-medium leading-snug text-[#4a3580] sm:text-base">
-                            <Star className="absolute top-0.5 left-0 h-5 w-5 fill-[#FFD700] text-[#FFD700]" />
-                            The top choice platform for students seeking help after school.
+                    {/* Stats Pill */}
+                    <div className="mx-auto mt-6 flex w-fit items-center gap-6 rounded-2xl border border-[#E1D5FF] bg-[#F8F5FF] px-5 py-3 md:mx-0">
+                        <div className="flex items-center gap-2">
+                            <Users className="h-5 w-5 text-[#8561F2]" />
+                            <span className="font-semibold text-[#5A5A5A] text-sm sm:text-base">5000+ Students</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <Presentation className="h-5 w-5 text-[#8561F2]" />
+                            <span className="font-semibold text-[#5A5A5A] text-sm sm:text-base">85+ Expert Teacher</span>
                         </div>
                     </div>
 
@@ -104,6 +108,15 @@ export default function HeroSection() {
                         className="pointer-events-none absolute top-1/2 right-0 w-[180px] -translate-y-1/2 rotate-90 opacity-75 sm:w-[240px] md:w-[300px]"
                     />
                 </div>
+            </div>
+
+            {/* Scroll Down Indicator */}
+            <div className="absolute right-6 top-1/2 hidden -translate-y-1/2 flex-col items-center xl:flex">
+                <div className="h-32 w-[2px] bg-gray-200" />
+                <ArrowDown className="my-2 h-5 w-5 text-gray-400" />
+                <span className="mt-12 rotate-90 whitespace-nowrap text-sm font-semibold tracking-wide text-gray-400">
+                    Scroll Down
+                </span>
             </div>
         </section>
     );

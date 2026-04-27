@@ -1,19 +1,19 @@
 'use client';
 
 import hamburger_menu from '@/assets/images/hamburger-menu.svg';
+import site_logo from '@/assets/images/site_logo.svg';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { dashboard, login, register } from '@/routes';
 import { type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { LogIn, PhoneCall, UserPlus } from 'lucide-react';
+import { LogIn, Phone, UserPlus } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 const navLinks = [
-    { name: 'Home', href: '/' },
-    { name: 'Courses', href: '/courses' },
-    { name: 'About Us', href: '/about-us' },
     { name: 'Contact', href: '/contact' },
+    { name: 'About us', href: '/about-us' },
+    { name: 'Courses', href: '/courses' },
 ];
 
 export const Navbar = () => {
@@ -46,69 +46,50 @@ export const Navbar = () => {
             }`}
         >
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                <div className="flex h-16 items-center justify-between sm:h-[68px]">
+                <div className="flex h-16 items-center justify-between sm:h-[80px]">
 
                     {/* Logo */}
                     <Link href="/" className="flex items-center gap-2">
-                        <div className="flex items-center">
-                            <span className="text-2xl font-extrabold tracking-tight text-[#673DE6] sm:text-3xl">
-                                Tut
-                            </span>
-                            <span className="text-2xl font-extrabold tracking-tight text-neutral-800 sm:text-3xl">
-                                Star
-                            </span>
-                            <span className="ml-1.5 hidden rounded-full bg-[#ECE8FF] px-2 py-0.5 text-[10px] font-bold text-[#673DE6] sm:inline-block">
-                                BETA
-                            </span>
-                        </div>
+                        <img src={site_logo} alt="TutStar Logo" className="h-8 w-auto sm:h-10" />
                     </Link>
 
-                    {/* Desktop Nav Links */}
-                    <div className="hidden items-center gap-1 md:flex lg:gap-2">
+                    {/* Desktop Navigation & Buttons */}
+                    <div className="hidden items-center gap-2 md:flex lg:gap-3">
+                        {/* Nav Links */}
                         {navLinks.map((link) => (
                             <Link
                                 key={link.name}
                                 href={link.href}
-                                className="rounded-lg px-3 py-2 text-sm font-medium text-neutral-600 transition-colors hover:bg-[#F4F0FF] hover:text-[#673DE6] lg:px-4"
+                                className="rounded-full border border-gray-800 bg-white px-5 py-2 text-sm font-medium text-gray-800 transition-colors hover:bg-gray-50"
                             >
                                 {link.name}
                             </Link>
                         ))}
-                    </div>
 
-                    {/* Auth Buttons */}
-                    <div className="hidden items-center gap-2 md:flex">
+                        {/* Call us */}
                         <a
                             href="tel:+918954553380"
-                            className="inline-flex items-center gap-2 rounded-full bg-[#FF972F] px-4 py-2 text-sm font-semibold text-white shadow-[0_4px_12px_rgba(255,151,47,0.35)] transition-all hover:bg-[#e57f15] hover:shadow-[0_6px_16px_rgba(255,151,47,0.45)]"
+                            className="inline-flex items-center gap-2 rounded-full bg-[#FF972F] px-5 py-2 text-sm font-medium text-white transition-all hover:bg-[#e57f15]"
                         >
-                            <PhoneCall className="h-3.5 w-3.5" />
-                            Call Now
+                            <Phone className="h-4 w-4" />
+                            Call us
                         </a>
+
+                        {/* Login/Dashboard */}
                         {auth?.user ? (
                             <Link
                                 href={dashboard().url}
-                                className="inline-flex items-center gap-2 rounded-full border border-[#673DE6] px-4 py-2 text-sm font-semibold text-[#673DE6] transition-all hover:bg-[#673DE6] hover:text-white"
+                                className="inline-flex items-center justify-center gap-2 rounded-full bg-[#673DE6] px-8 py-2 text-sm font-medium text-white transition-all hover:bg-[#5432c4]"
                             >
                                 Dashboard
                             </Link>
                         ) : (
-                            <div className="flex items-center gap-2">
-                                <Link
-                                    href={login()}
-                                    className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-neutral-700 shadow-sm transition-all hover:border-[#673DE6] hover:text-[#673DE6]"
-                                >
-                                    <LogIn className="h-3.5 w-3.5" />
-                                    Login
-                                </Link>
-                                <Link
-                                    href={register()}
-                                    className="inline-flex items-center gap-2 rounded-full bg-[#673DE6] px-4 py-2 text-sm font-semibold text-white shadow-[0_4px_12px_rgba(103,61,230,0.35)] transition-all hover:bg-[#5432c4] hover:shadow-[0_6px_16px_rgba(103,61,230,0.45)]"
-                                >
-                                    <UserPlus className="h-3.5 w-3.5" />
-                                    Sign Up
-                                </Link>
-                            </div>
+                            <Link
+                                href={login()}
+                                className="inline-flex items-center justify-center gap-2 rounded-full bg-[#673DE6] px-8 py-2 text-sm font-medium text-white transition-all hover:bg-[#5432c4]"
+                            >
+                                Login
+                            </Link>
                         )}
                     </div>
 
@@ -124,8 +105,7 @@ export const Navbar = () => {
                                 <SheetHeader className="border-b border-gray-100 px-6 py-5">
                                     <SheetTitle>
                                         <Link href="/" className="flex items-center" onClick={() => setIsOpen(false)}>
-                                            <span className="text-2xl font-extrabold text-[#673DE6]">Tut</span>
-                                            <span className="text-2xl font-extrabold text-neutral-800">Star</span>
+                                            <img src={site_logo} alt="TutStar Logo" className="h-8 w-auto" />
                                         </Link>
                                     </SheetTitle>
                                 </SheetHeader>
@@ -147,21 +127,21 @@ export const Navbar = () => {
                                     <div className="flex flex-col gap-3">
                                         <a
                                             href="tel:+918954553380"
-                                            className="inline-flex items-center justify-center gap-2 rounded-full bg-[#FF972F] px-5 py-3 text-sm font-semibold text-white"
+                                            className="inline-flex items-center justify-center gap-2 rounded-full bg-[#FF972F] px-5 py-3 text-sm font-medium text-white"
                                         >
-                                            <PhoneCall className="h-4 w-4" />
-                                            Call Now
+                                            <Phone className="h-4 w-4" />
+                                            Call us
                                         </a>
                                         {auth?.user ? (
                                             <Link href="/dashboard" onClick={() => setIsOpen(false)}>
-                                                <Button variant="default" className="w-full rounded-full">Dashboard</Button>
+                                                <Button variant="default" className="w-full rounded-full bg-[#673DE6] hover:bg-[#5432c4]">Dashboard</Button>
                                             </Link>
                                         ) : (
                                             <div className="flex gap-2">
                                                 <Link
                                                     href={login()}
                                                     onClick={() => setIsOpen(false)}
-                                                    className="flex-1 inline-flex items-center justify-center gap-2 rounded-full border border-[#673DE6] px-4 py-2.5 text-sm font-semibold text-[#673DE6] hover:bg-[#F4F0FF]"
+                                                    className="flex-1 inline-flex items-center justify-center gap-2 rounded-full bg-[#673DE6] px-4 py-2.5 text-sm font-medium text-white hover:bg-[#5432c4]"
                                                 >
                                                     <LogIn className="h-3.5 w-3.5" />
                                                     Login
@@ -169,7 +149,7 @@ export const Navbar = () => {
                                                 <Link
                                                     href={register()}
                                                     onClick={() => setIsOpen(false)}
-                                                    className="flex-1 inline-flex items-center justify-center gap-2 rounded-full bg-[#673DE6] px-4 py-2.5 text-sm font-semibold text-white"
+                                                    className="flex-1 inline-flex items-center justify-center gap-2 rounded-full border border-gray-800 bg-white px-4 py-2.5 text-sm font-medium text-gray-800 hover:bg-gray-50"
                                                 >
                                                     <UserPlus className="h-3.5 w-3.5" />
                                                     Sign Up
@@ -186,3 +166,4 @@ export const Navbar = () => {
         </nav>
     );
 };
+
